@@ -13,10 +13,87 @@
     $(document).ready(function() {
         $("#total").on("input", () => calculate());
         $("#addButton").click(() => addRow());
-        // Start off with a new row and calculate things
-        addRow();
+        $("#copyLinkButton").click(() => generateAndCopyUrl());
+
+        var loadedRows = loadFromQueryParams();
+        // If we didn't load any rows from query params, then just start off with a blank row
+        if (!loadedRows) {
+            addRow();
+        }
         calculate();
     });
+    function loadFromQueryParams() {
+        var params = (new URL(document.location)).searchParams;
+        total = params.get('total');
+        if (total) {
+            $("#total").val(total);
+        }
+        rows = params.getAll('row');
+        if (rows && rows.length > 0) {
+            rows.forEach((row) => {
+                [name, cost] = splitRowParam(row);
+                [nameId, costId] = addRow();
+                $("#" + nameId).val(name);
+                $("#" + costId).val(cost);
+            });
+            return true;
+        }
+        return false;
+    }
+    function splitRowParam(row) {
+        // We use last index in case the name has '|' in it (though that'd be weird)
+        const lastIndex = row.lastIndexOf('|');
+        // If there's no delimiter, then either the name or the cost is missing.  We'll assume it's
+        // the cost and try to parse it as such; but if that doesn't work, we'll assume it's the
+        // name instead.
+        if (lastIndex == -1) {
+            const cost = parseFloat(row);
+            console.log(cost);
+            if (isNaN(cost)) {
+                return [row, ""]
+            }
+            return ["", cost]
+        }
+        // Otherwise, we can just parse it normally as "<name>|<cost>"
+        const name = row.slice(0, lastIndex);
+        const cost = parseFloat(row.slice(lastIndex + 1));
+        return [name, cost]
+    }
+    function generateAndCopyUrl() {
+        var url = new URL(document.location);
+
+        total = getTotal();
+        if (total != 0) {
+            url.searchParams.append("total", total);
+        }
+
+        // Iterate over each row in the table body
+        $("#mainTable tbody tr").each(function() {
+          const nameCell = $(this).find("td").eq(0);
+          const costCell = $(this).find("td").eq(1);
+
+          const nameInput = nameCell.find("input");
+          var name = "";
+          if (nameInput.val() != "") {
+            name = nameInput.val();
+          }
+
+          const costInput = costCell.find("input");
+          var cost = 0;
+          if (costInput.val() != "") {
+            cost = costInput.val();
+          }
+
+          url.searchParams.append("row", name + "|" + cost);
+        });
+        navigator.clipboard.writeText(url.toString());
+        <!-- Icon from https://icons8.com/icon/21740/double-tick -->
+        <!-- background=#395B64 (addRowButton background) and color=#E5E5CB (body color) -->
+        $("#copyLinkButton img").attr('src',"icons8-double-tick-100.png")
+        setTimeout(() => {
+            $("#copyLinkButton img").attr('src',"icons8-link-100.png");
+        }, 1000);
+    }
     function addRow() {
         // each id should be unique for valid HTML
         const nameId = "name" + rowCounter;
@@ -35,6 +112,7 @@
         $("#mainTable tbody").append(rowContent);
         $("#" + costId).on("input", () => calculate());
         $("#" + removeRowButtonId).click(() => removeRow($("#" + removeRowButtonId)));
+        return [nameId, costId]
     }
     function calculate() {
         subtotal = calculateSubtotal();
@@ -144,6 +222,13 @@
     <!-- Icon from https://icons8.com/icon/11394/add-row -->
     <!-- background=#395B64 (addRowButton background) and color=#E5E5CB (body color) -->
     <img src="icons8-add-row-100.png" title="Add Row" class="addRowButtonImage">
+</button>
+<br>
+<br>
+<button id="copyLinkButton" class="addRowButton">
+    <!-- Icon from https://icons8.com/icon/7867/link -->
+    <!-- background=#395B64 (addRowButton background) and color=#E5E5CB (body color) -->
+    <img src="icons8-link-100.png" title="Copy Link" class="addRowButtonImage">
 </button>
 <br>
 <br>
