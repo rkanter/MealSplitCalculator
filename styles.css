@@ -1,0 +1,51 @@
+body {
+  background: #333;
+  color: #E5E5CB;
+  font-family: Helvetica;
+  font-size:18px;
+}
+
+table, th, td {
+  border-bottom: 1px solid #E5E5CB;
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+.inputTextField {
+  background: #735F32;
+  color: #E5E5CB;
+  font-size: 18px;
+  width: 100px;
+}
+
+.addRowButton {
+  background: #395B64;
+  width: 80px;
+}
+
+.addRowButtonImage {
+  width: 70%;
+  object-fit: contain;
+}
+
+a:link {
+  color: #395B64;
+}
+a:visited {
+  color: #395B64;
+}
+a:hover {
+  color: #395B64;
+}
+a:active {
+  color: #395B64;
+}
+
+.removeRowButton {
+  background: #395B64;
+  color: #E5E5CB;
+  float: right;
+  font-size: 18px;
+  font-weight: bold;
+}
+

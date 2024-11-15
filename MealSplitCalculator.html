@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meal Split Calculator</title>
+    <link rel="stylesheet" href="styles.css"/>
+    <!-- Icon from https://icons8.com/icon/84779/estimate with -->
+    <!-- background=#395B64 (addRowButton background) and color=#333 (body background) -->
+    <link rel="icon" type="image/x-icon" href="icons8-estimate-96.png">
+    <script src="jquery-3.6.3.min.js"></script>
+    <script>
+    var rowCounter = 1;
+    $(document).ready(function() {
+        $("#total").on("input", () => calculate());
+        $("#addButton").click(() => addRow());
+        // Start off with a new row and calculate things
+        addRow();
+        calculate();
+    });
+    function addRow() {
+        // each id should be unique for valid HTML
+        const nameId = "name" + rowCounter;
+        const costId = "cost" + rowCounter;
+        const removeRowButtonId = "removeRowButton" + rowCounter;
+        rowCounter = rowCounter + 1;
+        const rowContent = `
+            <tr>
+                <td><input type="text" id="${nameId}" name="${nameId}" class="inputTextField"></td>
+                <td>$ <input type="number" id="${costId}" name="${costId}" step="0.01" class="inputTextField"></td>
+                <td></td>
+                <td></td>
+                <td><button id="${removeRowButtonId}" class="removeRowButton">X</button></td>
+            </>tr>
+        `
+        $("#mainTable tbody").append(rowContent);
+        $("#" + costId).on("input", () => calculate());
+        $("#" + removeRowButtonId).click(() => removeRow($("#" + removeRowButtonId)));
+    }
+    function calculate() {
+        subtotal = calculateSubtotal();
+        [totalPercentage, totalToPay] = calculatePercentageAndToPay(subtotal);
+        // Update Totals row
+        $("#mainTable tfoot tr").each(function() {
+          const costCell = $(this).find("th").eq(1);
+          costCell.text("$ " + round(subtotal));
+          const percentageCell = $(this).find("th").eq(2);
+          percentageCell.text(totalPercentage + "%");
+          const toPayCell = $(this).find("th").eq(3);
+          toPayCell.text("$ " + totalToPay);
+        });
+        const extras = round(getTotal() - subtotal);
+        $("#extras").text("Taxes, Fees, Discounts, Tips, etc: $ " + extras);
+    }
+    function calculateSubtotal() {
+        var newSubtotal = 0.0;
+        // Iterate over each row in the table body
+        $("#mainTable tbody tr").each(function() {
+          const costCell = $(this).find("td").eq(1);
+
+          const costInput = costCell.find("input");
+          if (costInput.val() != "") {
+            newSubtotal = newSubtotal + parseFloat(costInput.val());
+          }
+        });
+        return newSubtotal;
+    }
+    function getTotal() {
+        total = $("#total").val();
+        if (total == "") {
+            total = 0;
+        }
+        return total;
+    }
+    function calculatePercentageAndToPay(subtotal) {
+        total = getTotal();
+
+        totalToPay = 0;
+        totalPercentage = 0;
+
+        // Iterate over each row in the table body
+        $("#mainTable tbody tr").each(function() {
+          const costCell = $(this).find("td").eq(1);
+          const percentageCell = $(this).find("td").eq(2);
+          const toPayCell = $(this).find("td").eq(3);
+
+          const costInput = costCell.find("input");
+          var cost = 0;
+          if (costInput.val() != "") {
+              cost = parseFloat(costInput.val());
+          }
+
+          percentage = 0;
+          if (subtotal != 0) {
+              var percentage = cost / subtotal;
+          }
+          roundedPercentage = round(percentage * 100);
+          totalPercentage = round(totalPercentage + roundedPercentage);
+          percentageCell.text(roundedPercentage + "%");
+
+          toPay = round(percentage * total);
+          totalToPay = round(totalToPay + toPay);
+          toPayCell.text("$ " + toPay);
+        });
+        return [totalPercentage, totalToPay];
+    }
+    function removeRow(button) {
+        button.closest('tr').remove();
+        calculate();
+    }
+    function round(num) {
+        return parseFloat((Math.round(num * 100) / 100).toFixed(2));
+    }
+    </script>
+</head>
+<body>
+<h1>Meal Split Calculator</h1>
+<label for="total"><b>Overall Total: $ </b></label><input type="number" id="total" name="total" step="0.01" class="inputTextField">
+<br>
+<br>
+<table id="mainTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Cost</th>
+            <th>Percentage</th>
+            <th>To Pay</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Totals</th>
+            <th align="left"></th>
+            <th align="left"></th>
+            <th align="left"></th>
+            <th></th>
+        </tr>
+    </tfoot>
+</table>
+<p id="extras"></p>
+<button id="addButton" class="addRowButton">
+    <!-- Icon from https://icons8.com/icon/11394/add-row -->
+    <!-- background=#395B64 (addRowButton background) and color=#E5E5CB (body color) -->
+    <img src="icons8-add-row-100.png" title="Add Row" class="addRowButtonImage">
+</button>
+<br>
+<br>
+<a href="../MealSplitCalculator" target="_blank">README</a>
+<br>
+<br>
+</body>
+</html>
