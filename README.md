@@ -1,7 +1,5 @@
 # Meal Split Calculator
-A simple webpage that helps me calculate how to split the cost of a meal with other people.
-
-# TODO
+A simple webpage that helps calculate how to split the cost of a meal with other people.
 
 1. [Overview](#overview)
 1. [How to Use](#how-to-use)
