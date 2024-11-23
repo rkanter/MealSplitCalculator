@@ -15,7 +15,7 @@ the shared expenses.
 
 Here's an example to better illustrate things:
 
-<img src=screenshot.png width=50%>
+<img src=screenshot.png width="50%" />
 
 You can play with it live [here](MealSplitCalculator.html?total=123.45&row=Phillip%7C21.17&row=Leela%7C17.22&row=Bender%7C44&row=Zoidberg%7C0&row=Amy%7C18.21)
 or [here on GitHub Pages](https://rkanter.github.io/MealSplitCalculator/MealSplitCalculator.html?total=123.45&row=Phillip%7C21.17&row=Leela%7C17.22&row=Bender%7C44&row=Zoidberg%7C0&row=Amy%7C18.21).
