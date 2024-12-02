@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Split Calculator</title>
     <link rel="stylesheet" href="styles.css"/>
     <!-- Icon from https://icons8.com/icon/84779/estimate with -->
@@ -102,11 +103,11 @@
         rowCounter = rowCounter + 1;
         const rowContent = `
             <tr>
-                <td><input type="text" id="${nameId}" name="${nameId}" class="inputTextField"></td>
-                <td>$ <input type="number" id="${costId}" name="${costId}" step="0.01" class="inputTextField"></td>
-                <td></td>
-                <td></td>
-                <td><button id="${removeRowButtonId}" class="removeRowButton">X</button></td>
+                <td nowrap><input type="text" id="${nameId}" name="${nameId}" class="inputTextField"></td>
+                <td nowrap>$ <input type="number" id="${costId}" name="${costId}" step="0.01" class="inputTextField"></td>
+                <td nowrap></td>
+                <td nowrap></td>
+                <td nowrap><button id="${removeRowButtonId}" class="removeRowButton">X</button></td>
             </>tr>
         `
         $("#mainTable tbody").append(rowContent);
